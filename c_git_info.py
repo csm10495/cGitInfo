@@ -89,10 +89,11 @@ def getRepoRevisionSetInfo(repoPath='.'):
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "-input_file", help="File path. This is generic file with %s somewhere to replace." % REPLACE_STR, type=str, required=True)
-    parser.add_argument("-o", "-output_file", help="Output file path (with replaced %s" % REPLACE_STR, type=str, required=True)
-    parser.add_argument("-r", "-repo_directory", help="Repository directory", type=str, required=False, default='.')
+    parser.add_argument("-input_file", "-i", help="File path. This is generic file with %s somewhere to replace." % REPLACE_STR, type=str, required=True)
+    parser.add_argument("-output_file", "-o", help="Output file path (with replaced %s)" % REPLACE_STR, type=str, required=True)
+    parser.add_argument("-repo_directory", "-r", help="Repository directory", type=str, required=False, default='.')
     args = parser.parse_args()
+
     with open(args.input_file, 'r') as f:
         txt = f.read()
         
