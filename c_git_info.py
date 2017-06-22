@@ -5,12 +5,27 @@ Brief:
 Author(s):
     Charles Machalow
 '''
+
 import argparse
+import contextlib
 import subprocess
 import os
 
 REPLACE_STR = '<C_GIT_INFO>'
 
+@contextlib.contextmanager
+def tempChDir(directory):
+    '''
+    Brief:
+        Temporarily go to a directory, yield, then go back
+    '''
+    cwd = os.getcwd()
+    try:
+        os.chdir(directory)
+        yield
+    finally:
+        os.chdir(cwd)
+        
 def hasChanges():
     '''
     Brief:
@@ -68,24 +83,37 @@ def getOriginUrl(repoPath='.'):
     Brief:
         Gets the url of the origin.
     '''
-    return subprocess.check_output('git config --get remote.origin.url', shell=True).decode().splitlines()[0]
+    with tempChDir(repoPath):
+        return subprocess.check_output('git config --get remote.origin.url', shell=True).decode().splitlines()[0]
+    
+def getLastCommitAuthorName(repoPath='.'):
+    '''
+    Brief:
+        Returns a string of the last committer's name
+    '''
+    with tempChDir(repoPath):
+        return subprocess.check_output('git log --format="%an"', shell=True).decode().splitlines()[0]
+        
+def getLastCommitAuthorEmail(repoPath='.'):
+    '''
+    Brief:
+        Returns a string of the last committer's email address
+    '''
+    with tempChDir(repoPath):
+        return subprocess.check_output('git log --format="%ae"', shell=True).decode().splitlines()[0]
 
 def getRepoRevisionSetInfo(repoPath='.'):
     '''
     Brief:
         Returns a string of information about the current repository commits/changesets
     '''
-    oldCwd = os.getcwd()
-    os.chdir(repoPath)
-    try:
+    with tempChDir(repoPath):
         branch = getCurrentBranch()
         hgIdNum = getHgStyleIdNum(branch)
         commitId = getCurrentCommitId(branch)
         repoName = getRepoNameFromCurrentFolder()
         origin = getOriginUrl()
         return "%s - %s (hg:%s) - %s - %s" % (repoName, commitId, hgIdNum, branch, origin)
-    finally:
-        os.chdir(oldCwd)
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
