@@ -27,6 +27,8 @@ if not hasattr(subprocess, 'check_output'):
             error.output = stdout
             raise error
         return stdout
+    subprocess.check_output = check_output
+    del check_output
 
 
 REPLACE_STR = '<C_GIT_INFO>'
