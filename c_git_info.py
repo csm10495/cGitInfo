@@ -11,6 +11,24 @@ import contextlib
 import subprocess
 import os
 
+# crappy backport of subprocess.check_output for Python 2.6...
+if not hasattr(subprocess, 'check_output'):
+    def check_output(cmd, shell=False):
+        '''
+        Brief:
+            Backport of check_output, just to work for what I need here.
+                Features are missing.
+        '''
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=shell)
+        stdout, stderr = process.communicate()
+        ret = process.poll()
+        if ret:
+            error = subprocess.CalledProcessError(ret, cmd)
+            error.output = stdout
+            raise error
+        return stdout
+
+
 REPLACE_STR = '<C_GIT_INFO>'
 
 @contextlib.contextmanager
