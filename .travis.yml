@@ -14,5 +14,8 @@ notifications:
     on_failure: always
 install:
   - pip install pytest
+  - pip install coveralls
 script:
   - python -m pytest test.py
+after_success:
+  coveralls
