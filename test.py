@@ -30,3 +30,18 @@ def test_flow():
         outputText = f.read()
 
     assert outputText.count(repoStr) == 2
+
+def test_see_changes():
+    '''
+    tests that we get a + when changes are in the repo
+    '''
+    with open(__file__, 'r') as f:
+        backupText = f.read()
+
+    with open(__file__, 'a+') as f:
+        f.write("\n\npass")
+    assert '+' in c_git_info.getRepoRevisionSetInfo('.')
+
+    # back to correct text
+    with open(__file__, 'w') as f:
+        f.write(backupText)
