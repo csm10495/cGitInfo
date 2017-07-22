@@ -13,10 +13,10 @@ notifications:
     on_success: never
     on_failure: always
 install:
-  - pip install pytest
+  - pip install pytest pytest-cov
   - pip install coveralls
   - pip install python-coveralls
 script:
-  - python -m pytest test.py --cov=c_git_info
+  - python -m pytest test.py --cov=c_git_info --cov-report term-missing
 after_success:
   - coveralls
