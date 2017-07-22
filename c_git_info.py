@@ -30,7 +30,6 @@ if not hasattr(subprocess, 'check_output'):
     subprocess.check_output = check_output
     del check_output
 
-
 REPLACE_STR = '<C_GIT_INFO>'
 
 @contextlib.contextmanager
@@ -45,7 +44,7 @@ def tempChDir(directory):
         yield
     finally:
         os.chdir(cwd)
-        
+
 def hasChanges():
     '''
     Brief:
@@ -53,7 +52,7 @@ def hasChanges():
     '''
     output = subprocess.check_output('git status -s -uno', shell=True)
     return bool(output.strip()) # True if output from this command
-    
+
 def getCurrentBranch():
     '''
     Brief:
@@ -61,7 +60,7 @@ def getCurrentBranch():
     '''
     output = subprocess.check_output('git rev-parse --abbrev-ref HEAD', shell=True)
     return output.strip().decode()
-    
+
 def getListOfCommits(branch='master'):
     '''
     Brief:
@@ -69,7 +68,7 @@ def getListOfCommits(branch='master'):
     '''
     commits = subprocess.check_output('git log --pretty=format:%%h --full-history %s' % branch, shell=True).decode().splitlines()
     return commits
-    
+
 def getCurrentCommitId(branch='master'):
     '''
     Brief:
@@ -79,7 +78,7 @@ def getCurrentCommitId(branch='master'):
     if hasChanges():
         return commit + "+"
     return commit
-    
+
 def getHgStyleIdNum(branch='master'):
     '''
     Brief:
@@ -90,7 +89,7 @@ def getHgStyleIdNum(branch='master'):
     if hasChanges():
         return start + "+"
     return start
-    
+
 def getRepoNameFromCurrentFolder():
     '''
     Brief:
@@ -105,7 +104,7 @@ def getOriginUrl(repoPath='.'):
     '''
     with tempChDir(repoPath):
         return subprocess.check_output('git config --get remote.origin.url', shell=True).decode().splitlines()[0]
-    
+
 def getLastCommitAuthorName(repoPath='.'):
     '''
     Brief:
@@ -113,7 +112,7 @@ def getLastCommitAuthorName(repoPath='.'):
     '''
     with tempChDir(repoPath):
         return subprocess.check_output('git log --format="%an"', shell=True).decode().splitlines()[0]
-        
+
 def getLastCommitAuthorEmail(repoPath='.'):
     '''
     Brief:
@@ -134,27 +133,31 @@ def getRepoRevisionSetInfo(repoPath='.'):
         repoName = getRepoNameFromCurrentFolder()
         origin = getOriginUrl()
         return "%s - %s (hg:%s) - %s - %s" % (repoName, commitId, hgIdNum, branch, origin)
-        
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-input_file", "-i", help="File path. This is generic file with %s somewhere to replace." % REPLACE_STR, type=str, required=True)
     parser.add_argument("-output_file", "-o", help="Output file path (with replaced %s)" % REPLACE_STR, type=str, required=True)
-    parser.add_argument("-repo_directory", "-r", help="Repository directory", type=str, required=False, default='.')
+    parser.add_argument("-repo_directories", "-r", help="Repository directories", nargs='+', type=str, required=False, default='.')
     args = parser.parse_args()
 
     with open(args.input_file, 'r') as f:
         txt = f.read()
-        
-    txt = txt.replace(REPLACE_STR, getRepoRevisionSetInfo(args.repo_directory))
-    
-    with open(args.output_file, 'r') as f:
-        currentText = f.read()
-        
+
+    for repoDir in args.repo_directories:
+        repoInfo = getRepoRevisionSetInfo(repoDir)
+        print (repoInfo)
+        txt = txt.replace(REPLACE_STR, repoInfo, 1)
+
+    if os.path.isfile(args.output_file):
+        with open(args.output_file, 'r') as f:
+            currentText = f.read()
+    else:
+        currentText = ""
+
     if txt == currentText:
         print ("Not updating. File matches!")
     else:
         with open(args.output_file, 'w') as f:
             f.write(txt)
         print ("Updated changset info!")
-    
-    
