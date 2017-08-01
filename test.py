@@ -30,6 +30,24 @@ def test_flow():
         outputText = f.read()
 
     assert outputText.count(repoStr) == 2
+    
+def test_flow_powershell():
+    '''
+    tests the input->output flow
+    '''
+    with open('_input.txt', 'w') as f:
+        # write it twice
+        f.write(c_git_info.REPLACE_STR + "\n")
+        f.write(c_git_info.REPLACE_STR)
+
+    # same repo twice
+    runLine = 'powershell -ExecutionPolicy ByPass ./c_git_info.py -i _input.txt -o _output.txt -r ".", "."'
+    c_git_info.subprocess.check_output(runLine, shell=True)
+    repoStr = c_git_info.getRepoRevisionSetInfo('.')
+    with open('_output.txt', 'r') as f:
+        outputText = f.read()
+
+    assert outputText.count(repoStr) == 2
 
 def test_see_changes():
     '''
