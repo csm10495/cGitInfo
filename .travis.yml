@@ -14,12 +14,15 @@ notifications:
     on_success: never
     on_failure: always
 install:
+  - sudo add-apt-repository ppa:git-core/ppa
+  - sudo apt-get update
+  - sudo apt-get install git -y
   - pip install pytest pytest-cov
   - pip install coveralls
   - pip install python-coveralls
   - wget https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh && sudo chmod +x install-powershell.sh && ./install-powershell.sh
 script:
-  - git checkout master
+  - git --version
   - python -m pytest test.py --cov=c_git_info --cov-report term-missing
 after_success:
   - coveralls
