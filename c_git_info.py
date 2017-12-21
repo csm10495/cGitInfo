@@ -61,25 +61,31 @@ def getCurrentBranch():
     output = subprocess.check_output('git rev-parse --abbrev-ref HEAD', shell=True)
     return output.strip().decode()
 
-def getListOfCommits(branch='master'):
+def getListOfCommits(branch=None):
     '''
     Brief:
         Returns list of commits on given branch. 0th is most recent.
     '''
+    if branch is None:
+        branch = getCurrentBranch()
+
     commits = subprocess.check_output('git log --pretty=format:%%h --full-history %s' % branch, shell=True).decode().splitlines()
     return commits
 
-def getCurrentCommitId(branch='master'):
+def getCurrentCommitId(branch=None):
     '''
     Brief:
         Gets the hash of the current commit and appenda a "+" if there are staged changes
     '''
+    if branch is None:
+        branch = getCurrentBranch()
+
     commit = getListOfCommits(branch)[0] # first is newest
     if hasChanges():
         return commit + "+"
     return commit
 
-def getHgStyleIdNum(branch='master'):
+def getHgStyleIdNum(branch=None):
     '''
     Brief:
         Gets an hg-style id number for the current commit

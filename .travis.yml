@@ -1,4 +1,4 @@
-language: python 
+language: python
 dist: trusty
 sudo: required
 python:
@@ -17,8 +17,9 @@ install:
   - pip install pytest pytest-cov
   - pip install coveralls
   - pip install python-coveralls
-  - wget https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/download.sh && sudo chmod +x download.sh && ./download.sh
+  - wget https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh && sudo chmod +x install-powershell.sh && ./install-powershell.sh
 script:
+  - git --version
   - python -m pytest test.py --cov=c_git_info --cov-report term-missing
 after_success:
   - coveralls
