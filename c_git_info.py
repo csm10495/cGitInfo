@@ -58,8 +58,9 @@ def getCurrentBranch():
     Brief:
         Returns the name of the current branch
     '''
-    output = subprocess.check_output('git rev-parse --abbrev-ref HEAD', shell=True)
-    return output.strip().decode()
+    output = subprocess.check_output('git log -n 1 --pretty=%d HEAD', shell=True).decode()
+    output = output.split(',')[-1].split(')')[0]
+    return output.strip()
 
 def getListOfCommits(branch=None):
     '''
