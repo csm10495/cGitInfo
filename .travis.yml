@@ -14,10 +14,10 @@ notifications:
     on_success: never
     on_failure: always
 install:
-  - python2 -m pip install pytest pytest-cov coveralls python-coveralls
+  - pip install pytest pytest-cov coveralls python-coveralls
   - wget https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh && sudo chmod +x install-powershell.sh && ./install-powershell.sh
 script:
   - git --version
-  - python2 -m pytest test.py --cov=c_git_info --cov-report term-missing
+  - pytest test.py --cov=c_git_info --cov-report term-missing
 after_success:
   - coveralls
