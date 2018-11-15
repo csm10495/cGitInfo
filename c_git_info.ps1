@@ -134,8 +134,10 @@ function Get-Repo-Revision-Set-Info($repoPath='.'){
 
 if ($repo_directories -ne $false -and $input_file -ne $false -and $output_file -ne $false) {
     $txt = Get-Content $input_file -Raw
-    for ($i=0; $i -lt $repo_directories.length; $i++) {
-        $repoInfo = Get-Repo-Revision-Set-Info $repo_directories[$i]
+    $repo_array = ($repo_directories -split ',')
+    for ($i=0; $i -lt $repo_array.length; $i++) {
+        Write-Host $repo_array[$i]
+        $repoInfo = (Get-Repo-Revision-Set-Info $repo_array[$i])
         Write-Host $repoInfo
         $txt = $REPLACE_STR.Replace($txt, $repoInfo, 1)
     }
