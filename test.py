@@ -13,6 +13,12 @@ def test_everything():
         if hasattr(thing, '__call__'):
             thing() # don't assert on this since False is probably ok
 
+def test_current_branch():
+    '''
+    makes sure we can get a valid current branch
+    '''
+    assert c_git_info.getCurrentBranch() != 'HEAD'
+
 def test_flow():
     '''
     tests the input->output flow
@@ -35,7 +41,6 @@ def test_flow_powershell():
     '''
     tests the input->output flow
     '''
-    pytest.skip('something is wrong, this passes on Windows, fails on Linux')
     with open('_input.txt', 'w') as f:
         # write it twice
         f.write(c_git_info.REPLACE_STR + "\n")

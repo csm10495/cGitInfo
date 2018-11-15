@@ -33,6 +33,11 @@ function Get-Current-Branch(){
         Returns the name of the current branch
     #>
     $output = git rev-parse --abbrev-ref HEAD
+    $output = $output.trim()
+    if ($output -eq "HEAD") {
+        $output = git log -n 1 --pretty=%d HEAD
+        $output = $output.split(',')[-1].split(')')[0].split('/', 1)[-1]
+    }
     return $output.trim()
 }
 
