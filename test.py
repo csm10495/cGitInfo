@@ -47,7 +47,7 @@ def test_flow_powershell():
         f.write(c_git_info.REPLACE_STR)
 
     # same repo twice
-    runLine = 'powershell -ExecutionPolicy ByPass ./c_git_info.ps1 -input_file _input.txt -output_file _output.txt -repo_directories ".", "."'
+    runLine = 'pwsh -ExecutionPolicy ByPass ./c_git_info.ps1 -input_file _input.txt -output_file _output.txt -repo_directories ".", "."'
     c_git_info.subprocess.check_output(runLine, shell=True)
     repoStr = c_git_info.getRepoRevisionSetInfo('.')
     with open('_output.txt', 'r') as f:
