@@ -62,9 +62,14 @@ def getCurrentBranch():
     if output == 'HEAD':
         output = subprocess.check_output('git log -n 1 --pretty=%d HEAD', shell=True).decode()
         output = output.split(',')[-1].split(')')[0].split('/', 1)[-1].split('->')[-1].strip()
+        
+        # handle if this is a tag that is checked out. Consider the tag as a branch.
+        if output.startswith('tag: '):
+            output = output.split('tag: ')[-1]
+            
         if 'HEAD' in output:
             output = subprocess.check_output('git name-rev --name-only HEAD', shell=True).decode().strip()
-            output = output.split('/')[-1]
+            output = output.split('/', 1)[-1].split('^')[0].split('~')[0] # remove extra characters from branch name
     return output.strip()
 
 def getListOfCommits(branch=None):
