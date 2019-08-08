@@ -80,7 +80,12 @@ def getListOfCommits(branch=None):
     if branch is None:
         branch = getCurrentBranch()
 
-    commits = subprocess.check_output('git log --pretty=format:%%h --full-history %s' % branch, shell=True).decode().splitlines()
+    try:
+        commits = subprocess.check_output('git log --pretty=format:%%h --full-history %s' % branch, shell=True, stderr=subprocess.STDOUT).decode().splitlines()
+    except subprocess.CalledProcessError:
+        # Maybe remote only?
+        commits = subprocess.check_output('git log --pretty=format:%%h --full-history origin/%s' % branch, shell=True, stderr=subprocess.STDOUT).decode().splitlines()
+        
     return commits
 
 def getCurrentCommitId(branch=None):
