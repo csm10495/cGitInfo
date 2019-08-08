@@ -13,13 +13,13 @@ import os
 
 # crappy backport of subprocess.check_output for Python 2.6...
 if not hasattr(subprocess, 'check_output'):
-    def check_output(cmd, shell=False):
+    def check_output(cmd, shell=False, stderr=subprocess.PIPE):
         '''
         Brief:
             Backport of check_output, just to work for what I need here.
                 Features are missing.
         '''
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=shell)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=shell, stderr=stderr)
         stdout, stderr = process.communicate()
         ret = process.poll()
         if ret:
